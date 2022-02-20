@@ -1,0 +1,28 @@
+{
+  "root": "apps/bounce-e2e",
+  "sourceRoot": "apps/bounce-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/bounce-e2e/cypress.json",
+        "devServerTarget": "bounce:serve"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "bounce:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/bounce-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["bounce"]
+}

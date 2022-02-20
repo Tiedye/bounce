@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "projects": {}
+  "projects": {
+    "bounce": "apps/bounce",
+    "bounce-e2e": "apps/bounce-e2e"
+  }
 }

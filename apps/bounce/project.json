@@ -1,0 +1,67 @@
+{
+  "projectType": "application",
+  "root": "apps/bounce",
+  "sourceRoot": "apps/bounce/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/bounce",
+        "compiler": "swc",
+        "index": "apps/bounce/src/index.html",
+        "baseHref": "/",
+        "main": "apps/bounce/src/main.ts",
+        "polyfills": "apps/bounce/src/polyfills.ts",
+        "tsConfig": "apps/bounce/tsconfig.app.json",
+        "assets": ["apps/bounce/src/favicon.ico", "apps/bounce/src/assets"],
+        "styles": ["apps/bounce/src/styles.css"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/bounce/src/environments/environment.ts",
+              "with": "apps/bounce/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "bounce:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "bounce:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/bounce/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/bounce"],
+      "options": {
+        "jestConfig": "apps/bounce/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
