@@ -42,5 +42,6 @@
       "linter": "eslint",
       "unitTestRunner": "jest"
     }
-  }
+  },
+  "plugins": ["@nxrs/cargo"]
 }

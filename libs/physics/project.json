@@ -1,0 +1,32 @@
+{
+  "root": "libs/physics",
+  "projectType": "library",
+  "sourceRoot": "libs/physics/src",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "wasm-pack build",
+        "cwd": "libs/physics"
+      },
+      "configurations": {
+        "production": {
+          "args": "--release"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nxrs/cargo:test",
+      "options": {}
+    },
+    "lint": {
+      "executor": "@nxrs/cargo:clippy",
+      "options": {
+        "fix": false,
+        "failOnWarnings": true,
+        "noDeps": true
+      }
+    }
+  },
+  "tags": []
+}

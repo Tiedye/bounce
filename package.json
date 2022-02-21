@@ -23,6 +23,7 @@
     "@nrwl/tao": "13.8.3",
     "@nrwl/web": "^13.8.3",
     "@nrwl/workspace": "13.8.3",
+    "@nxrs/cargo": "^0.3.2",
     "@swc/core": "1.2.118",
     "@swc/jest": "0.2.15",
     "@types/jest": "27.0.2",

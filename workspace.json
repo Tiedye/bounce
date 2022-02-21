@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "bounce": "apps/bounce",
-    "bounce-e2e": "apps/bounce-e2e"
+    "bounce-e2e": "apps/bounce-e2e",
+    "physics": "libs/physics"
   }
 }
