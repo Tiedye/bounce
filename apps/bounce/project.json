@@ -28,7 +28,8 @@
         "styles": [
           "apps/bounce/src/styles.css"
         ],
-        "scripts": []
+        "scripts": [],
+        "webpackConfig": "apps/bounce/webpack.config.js"
       },
       "configurations": {
         "production": {

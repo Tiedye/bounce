@@ -1,34 +1,17 @@
-import './app.css';
+import { make_polygon, polygon_contains } from '@bounce/physics';
+import { init, loop, scope } from './canvas2d';
 
-const canvas = document.createElement('canvas');
+const ctx = init();
 
-document.body.appendChild(canvas);
+const points = [
+  [30, 40],
+  [40, -10],
+  [-10, -20],
+  [-50, -15],
+  [-30, 30],
+];
 
-const ctx = canvas.getContext('2d');
-
-const scope = (
-  ctx: { save: () => unknown; restore: () => unknown },
-  block: () => unknown
-) => {
-  ctx.save();
-  block();
-  ctx.restore();
-};
-
-if (!ctx) throw new Error('no context');
-
-const fixSize = () => {
-  const { width, height } = document.body.getBoundingClientRect();
-  canvas.width = width;
-  canvas.height = height;
-  const scale = Math.min(width, height) / 200;
-  ctx.resetTransform();
-  ctx.scale(scale, scale);
-  ctx.translate(width / scale / 2, height / scale / 2);
-};
-
-window.addEventListener('resize', fixSize);
-fixSize();
+// const poly = make_polygon(new Float32Array(points.flat()));
 
 let a = 0;
 let va = 1;
@@ -42,31 +25,31 @@ window.addEventListener('mousemove', (e) => {
 
 let t = performance.now();
 
-const render = () => {
+const PHI = (1 + Math.sqrt(5)) / 2;
+
+loop(() => {
   const t2 = performance.now();
   const dt = (t2 - t) / 1000;
   t = t2;
 
   a += va * dt;
 
-  ctx.fillStyle = `rgba(255 255 255 / ${o})`;
+  ctx.fillStyle = `rgba(${o * 255} ${o * 255} ${o * 255})`;
+  ctx.globalCompositeOperation = 'lighter';
   ctx.fillRect(-1000, -1000, 2000, 2000);
-  ctx.fillStyle = '#000';
+  ctx.globalCompositeOperation = 'source-over';
+  const h = Math.sin(a / 10) * 180 + 180;
+  const s = Math.sin((a / 10) * PHI) * 25 + 75;
+  const l = Math.sin(a / 10 / PHI) * 25 + 50;
+  ctx.strokeStyle = `hsl(${h} ${s}% ${l}%)`;
   // ctx.fillText(`${va.toPrecision(2)} ${o.toPrecision(2)}`, 0, 0);
   scope(ctx, () => {
     ctx.rotate(a);
-    ctx.translate(0, 50);
+    ctx.translate(0, Math.sin((a / 100) * PHI ** 2) * 20 + 50);
     ctx.scale(10, 10);
-    ctx.rotate(10 * a);
+    ctx.rotate(PHI ** 3 * a);
     ctx.translate(-0.5, -0.5);
     ctx.lineWidth = 0.1;
     ctx.strokeRect(0, 0, 1, 1);
   });
-};
-
-const loop = () => {
-  render();
-  window.requestAnimationFrame(loop);
-};
-
-window.requestAnimationFrame(loop);
+});
