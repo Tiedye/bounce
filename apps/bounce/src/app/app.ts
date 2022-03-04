@@ -3,7 +3,7 @@ import {
   polygon_draw,
   polygon_intersection,
 } from '@bounce/physics';
-import { init, loop, scope } from './canvas2d';
+import { init, loop } from './canvas2d';
 
 const [canvas, ctx] = init();
 
@@ -25,9 +25,11 @@ let cmy = 0;
 const log: string[] = [];
 
 document.addEventListener('click', (e) => {
-  cmx = e.clientX;
-  cmy = e.clientY;
-  canvas.requestPointerLock();
+  if (!document.pointerLockElement) {
+    cmx = e.clientX;
+    cmy = e.clientY;
+    canvas.requestPointerLock();
+  }
 });
 
 document.addEventListener('mousemove', (e) => {
@@ -35,34 +37,54 @@ document.addEventListener('mousemove', (e) => {
   cmy += e.movementY;
 });
 
+let x = 0,
+  y = 0,
+  a = 0,
+  dx = 2,
+  dy = -1,
+  da = 0.05;
+
 loop(() => {
   const t2 = performance.now();
   const dt = (t2 - t) / 1000;
   t = t2;
 
+  x += dt * dx;
+  y += dt * dy;
+  a += dt * da;
+
   const imatrix = ctx.getTransform().inverse();
 
   const mouse = imatrix.transformPoint(new DOMPoint(cmx, cmy));
 
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#000';
   ctx.fillRect(-1000, -1000, 2000, 2000);
-  ctx.strokeStyle = 'solid black 2px';
+  ctx.strokeStyle = '#fff';
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(a);
   polygon_draw(poly, ctx);
+  ctx.restore();
+
   const p = polygon_intersection(poly, mouse.x, mouse.y);
-  ctx.fillStyle = '#444';
+  ctx.fillStyle = 'rgb(255 255 255 / 10%)';
   if (p) ctx.fill();
   ctx.stroke();
   if (p) {
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
     ctx.lineTo(mouse.x, mouse.y);
+    ctx.save();
+    ctx.resetTransform();
     ctx.stroke();
+    ctx.restore();
   }
   ctx.fillStyle = 'red';
-  scope(ctx, () => {
-    ctx.translate(mouse.x, mouse.y);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 2, 2, 0, 0, Math.PI * 2);
-    ctx.fill();
-  });
+  ctx.save();
+  ctx.translate(mouse.x, mouse.y);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 2, 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 });

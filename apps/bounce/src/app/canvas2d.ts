@@ -24,15 +24,6 @@ export const init = () => {
   return [canvas, ctx] as const;
 };
 
-export const scope = (
-  ctx: { save: () => unknown; restore: () => unknown },
-  block: () => unknown
-) => {
-  ctx.save();
-  block();
-  ctx.restore();
-};
-
 export const loop = (block: () => unknown) => {
   const doLoop = () => {
     block();
