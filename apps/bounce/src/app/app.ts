@@ -1,55 +1,68 @@
-import { make_polygon, polygon_contains } from '@bounce/physics';
+import {
+  make_polygon,
+  polygon_draw,
+  polygon_intersection,
+} from '@bounce/physics';
 import { init, loop, scope } from './canvas2d';
 
-const ctx = init();
+const [canvas, ctx] = init();
 
 const points = [
   [30, 40],
   [40, -10],
-  [-10, -20],
-  [-50, -15],
+  [-20, -20],
+  [-30, -15],
   [-30, 30],
 ];
 
-// const poly = make_polygon(new Float32Array(points.flat()));
-
-let a = 0;
-let va = 1;
-let o = 0.1;
-
-window.addEventListener('mousemove', (e) => {
-  const { width, height } = document.body.getBoundingClientRect();
-  va = Math.expm1(e.clientX / width) * 5;
-  o = (Math.expm1(e.clientY / height) / (Math.E - 1)) ** 2;
-});
+const poly = make_polygon(new Float32Array(points.flat()));
 
 let t = performance.now();
 
-const PHI = (1 + Math.sqrt(5)) / 2;
+let cmx = 0;
+let cmy = 0;
+
+const log: string[] = [];
+
+document.addEventListener('click', (e) => {
+  cmx = e.clientX;
+  cmy = e.clientY;
+  canvas.requestPointerLock();
+});
+
+document.addEventListener('mousemove', (e) => {
+  cmx += e.movementX;
+  cmy += e.movementY;
+});
 
 loop(() => {
   const t2 = performance.now();
   const dt = (t2 - t) / 1000;
   t = t2;
 
-  a += va * dt;
+  const imatrix = ctx.getTransform().inverse();
 
-  ctx.fillStyle = `rgba(${o * 255} ${o * 255} ${o * 255})`;
-  ctx.globalCompositeOperation = 'lighter';
+  const mouse = imatrix.transformPoint(new DOMPoint(cmx, cmy));
+
+  ctx.fillStyle = '#fff';
   ctx.fillRect(-1000, -1000, 2000, 2000);
-  ctx.globalCompositeOperation = 'source-over';
-  const h = Math.sin(a / 10) * 180 + 180;
-  const s = Math.sin((a / 10) * PHI) * 25 + 75;
-  const l = Math.sin(a / 10 / PHI) * 25 + 50;
-  ctx.strokeStyle = `hsl(${h} ${s}% ${l}%)`;
-  // ctx.fillText(`${va.toPrecision(2)} ${o.toPrecision(2)}`, 0, 0);
+  ctx.strokeStyle = 'solid black 2px';
+  polygon_draw(poly, ctx);
+  const p = polygon_intersection(poly, mouse.x, mouse.y);
+  ctx.fillStyle = '#444';
+  if (p) ctx.fill();
+  ctx.stroke();
+  if (p) {
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(mouse.x, mouse.y);
+    ctx.stroke();
+  }
+  ctx.fillStyle = 'red';
   scope(ctx, () => {
-    ctx.rotate(a);
-    ctx.translate(0, Math.sin((a / 100) * PHI ** 2) * 20 + 50);
-    ctx.scale(10, 10);
-    ctx.rotate(PHI ** 3 * a);
-    ctx.translate(-0.5, -0.5);
-    ctx.lineWidth = 0.1;
-    ctx.strokeRect(0, 0, 1, 1);
+    ctx.translate(mouse.x, mouse.y);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 2, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
   });
 });

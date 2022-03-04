@@ -21,7 +21,7 @@ export const init = () => {
 
   window.addEventListener('resize', fixSize);
   fixSize();
-  return ctx;
+  return [canvas, ctx] as const;
 };
 
 export const scope = (
@@ -40,4 +40,5 @@ export const loop = (block: () => unknown) => {
   };
 
   window.requestAnimationFrame(doLoop);
+  // setInterval(block, 500);
 };
