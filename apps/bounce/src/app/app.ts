@@ -37,21 +37,10 @@ document.addEventListener('mousemove', (e) => {
   cmy += e.movementY;
 });
 
-let x = 0,
-  y = 0,
-  a = 0,
-  dx = 2,
-  dy = -1,
-  da = 0.05;
-
 loop(() => {
   const t2 = performance.now();
   const dt = (t2 - t) / 1000;
   t = t2;
-
-  x += dt * dx;
-  y += dt * dy;
-  a += dt * da;
 
   const imatrix = ctx.getTransform().inverse();
 
@@ -61,11 +50,7 @@ loop(() => {
   ctx.fillRect(-1000, -1000, 2000, 2000);
   ctx.strokeStyle = '#fff';
 
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(a);
   polygon_draw(poly, ctx);
-  ctx.restore();
 
   const p = polygon_intersection(poly, mouse.x, mouse.y);
   ctx.fillStyle = 'rgb(255 255 255 / 10%)';
